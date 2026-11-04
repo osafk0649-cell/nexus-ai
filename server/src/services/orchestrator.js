@@ -20,6 +20,7 @@ async function runAgent({ io, run, agent, input, task, index }) {
     agent: agent.name, status: "running", task
   });
 
+  // run the agent's task using the Groq API
   try {
     const output = await askGroq({
       system: `You are the ${agent.name} in NEXUS, a collaborative multi-agent problem-solving system.
@@ -52,6 +53,7 @@ export async function executeWorkflow({ io, run }) {
   try {
     emit(io, String(run._id), "workflow:status", { status: "planning" });
 
+    // plan the workflow using the Groq API
     const plannerText = await askGroq({
       system: "You are the NEXUS Planner Agent. Decompose the user's objective into 3 to 6 clear, ordered subtasks. Return valid JSON only with keys: objective, complexity, tasks (array of objects with id, title, assignedAgent, description, dependsOn). Use agent names Research Agent, Analysis Agent, Execution Agent, Critic Agent, Final Writer Agent where appropriate.",
       user: run.prompt,
