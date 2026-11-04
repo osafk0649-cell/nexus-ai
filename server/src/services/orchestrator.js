@@ -1,5 +1,6 @@
 import { askGroq, parseJson } from "./groq.js";
 
+// this is the orchestrator that runs the multi-agent workflow for a given run
 const AGENTS = [
   { name: "Research Agent", task: "Gather relevant background, facts, market/context information, and clearly label assumptions or unknowns." },
   { name: "Analysis Agent", task: "Analyse the research, identify patterns, opportunities, risks, trade-offs and useful conclusions." },
