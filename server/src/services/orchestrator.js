@@ -73,6 +73,7 @@ export async function executeWorkflow({ io, run }) {
       input: { plan }
     });
 
+    // run the analysis and execution agents in sequence, passing the outputs along
     const analysis = await runAgent({
       io, run, agent: AGENTS[1], index: 1,
       task: "Analyse the Research Agent's findings. Identify opportunities, risks and conclusions.",
@@ -86,6 +87,8 @@ export async function executeWorkflow({ io, run }) {
     });
 
     emit(io, String(run._id), "workflow:status", { status: "verifying" });
+
+    // run the critic agent to verify the outputs of the previous agents
     const criticText = await askGroq({
       system: "You are the NEXUS Critic / Verification Agent. Critically review agent outputs. Identify unsupported claims, gaps, contradictions, risky assumptions and improvements. Do not claim external fact-checking. Return valid JSON with keys: score (0-100), verdict, issues (array), improvements (array), limitations.",
       user: `Original request:\n${run.prompt}\n\nResearch:\n${research}\n\nAnalysis:\n${analysis}\n\nExecution plan:\n${execution}`,
@@ -96,6 +99,8 @@ export async function executeWorkflow({ io, run }) {
     emit(io, String(run._id), "verification:complete", { verification });
 
     emit(io, String(run._id), "workflow:status", { status: "writing" });
+
+    // run the final writer agent to produce a polished report based on all previous outputs
     const finalAnswer = await askGroq({
       system: "You are the NEXUS Final Writer Agent. Produce a polished, actionable report using the supplied multi-agent work. Include executive summary, findings, analysis, recommended actions, risks, assumptions and next steps. Be honest about limitations and do not invent citations.",
       user: `USER REQUEST:\n${run.prompt}\n\nRESEARCH:\n${research}\n\nANALYSIS:\n${analysis}\n\nACTION PLAN:\n${execution}\n\nCRITIC REVIEW:\n${JSON.stringify(verification, null, 2)}`
