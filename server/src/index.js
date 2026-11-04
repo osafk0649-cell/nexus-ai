@@ -6,20 +6,24 @@ import mongoose from "mongoose";
 import { Server } from "socket.io";
 import runRoutes from "./routes/runs.js";
 
+// create the Express app and HTTP server, and set up Socket.IO for real-time communication
 const app = express();
 const server = http.createServer(app);
 const origin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 const io = new Server(server, { cors: { origin, methods: ["GET", "POST"] } });
 
+// set up middleware and routes
 app.use(cors({ origin }));
 app.use(express.json({ limit: "2mb" }));
 app.get("/api/health", (_req, res) => res.json({ status: "ok", service: "NEXUS AI API" }));
 app.use("/api/runs", runRoutes(io));
 
+// handle Socket.IO connections for clients joining a workflow room
 io.on("connection", socket => {
   socket.on("workflow:join", runId => socket.join(String(runId)));
 });
 
+// start the server and connect to MongoDB
 const port = process.env.PORT || 8080;
 try {
   if (process.env.MONGODB_URI) {
