@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # NEXUS AI — Autonomous Multi-Agent Problem Solver
 
 NEXUS is a hackathon-ready multi-agent AI prototype built with React, Node.js, Express, MongoDB, Socket.IO and Groq.
@@ -71,3 +72,6 @@ Socket.IO:
 4. Open the communication timeline to explain how outputs are handed off.
 5. Show the critic score/issues and the final report.
 6. Explain limitations honestly and describe how live search, parallel execution and human approval can extend it.
+=======
+# nexus-ai
+>>>>>>> a34d5270a88a94360d9e9af9a64b7501b02acca1
